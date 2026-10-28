@@ -66,7 +66,6 @@ ScrollTrigger.create({
 });
 
 /* ---------------- entry reveals ---------------- */
-gsap.from('.reveal-line > span', { yPercent: 105, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.12, delay: 0.15 });
 const io = new IntersectionObserver((ents) => ents.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.15 });
 $$('.fade-up').forEach((el, i) => { el.style.transitionDelay = (0.35 + i * 0.1) + 's'; io.observe(el); });
 if (!reduce) {
