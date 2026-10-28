@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maracas Springs | Natural Spring Water, Trinidad</title>
+<meta name="description" content="Natural spring water bottled at Maracas, Trinidad. Lab tested, BPA-free, delivered across Trinidad. TT$10 a bottle.">
+<meta name="theme-color" content="#eef3f2">
+<meta property="og:title" content="Maracas Springs Natural Spring Water">
+<meta property="og:description" content="Water is life. Nature gives it meaning. Order spring water from Maracas, Trinidad.">
+<meta property="og:image" content="img/hero-stream.webp">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="preload" as="image" href="img/hero-stream.webp">
+<link rel="stylesheet" href="css/style.css">
+<script>try{var t=localStorage.getItem('ms-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<canvas id="bottle3d" aria-hidden="true"></canvas>
+
+<header class="nav-wrap">
+  <nav class="nav" aria-label="Main">
+    <a href="#top" class="brand" aria-label="Maracas Springs home">
+      <span class="brand-mark" aria-hidden="true"><i class="ph-fill ph-drop"></i></span>
+      <span>Maracas Springs</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#source">Source</a></li>
+      <li><a href="#lab">Lab results</a></li>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#order">Delivery</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Switch colour theme"><i class="ph-light ph-moon"></i></button>
+      <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+        <i class="ph-light ph-tote-simple"></i><span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <ul>
+    <li><a href="#source">Source</a></li>
+    <li><a href="#lab">Lab results</a></li>
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#order">Delivery</a></li>
+  </ul>
+  <a class="menu-wa" href="https://wa.me/18687248356" target="_blank" rel="noopener"><i class="ph-light ph-whatsapp-logo"></i> 868-724-8356</a>
+</div>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-copy">
+      <h1 class="reveal-line"><span>Water is life.</span> <span>Nature gives it <em>meaning.</em></span></h1>
+      <p class="hero-sub fade-up">Natural spring water from Maracas, Trinidad, with its minerals intact. Lab tested, BPA-free, TT$10 a bottle.</p>
+      <div class="hero-ctas fade-up">
+        <a href="#shop" class="btn btn-primary">Shop water <span class="btn-island"><i class="ph-light ph-arrow-up-right"></i></span></a>
+        <a href="#lab" class="btn btn-ghost">See lab results</a>
+      </div>
+    </div>
+    <div class="hero-media">
+      <div class="bezel hero-frame">
+        <div class="bezel-core"><img src="img/hero-stream.webp" alt="Clear stream running over mossy rocks in a green rainforest" fetchpriority="high"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY: pinned, bottle turns while three facts change -->
+  <section class="story" id="source">
+    <div class="story-pin">
+      <div class="story-word" aria-hidden="true">MARACAS</div>
+      <div class="story-steps">
+        <article class="step" data-step="0">
+          <i class="ph-light ph-mountains"></i>
+          <h2>From the Northern Range</h2>
+          <p>Sourced from a natural spring above Maracas, where rain filters slowly through rock and forest.</p>
+        </article>
+        <article class="step" data-step="1">
+          <i class="ph-light ph-atom"></i>
+          <h2>Minerals left in</h2>
+          <p>Not stripped by reverse osmosis. The naturally occurring minerals and trace elements stay in every bottle.</p>
+        </article>
+        <article class="step" data-step="2">
+          <i class="ph-light ph-recycle"></i>
+          <h2>A bottle you can trust</h2>
+          <p>500ml in a BPA-free bottle. Please recycle it when you are done.</p>
+        </article>
+      </div>
+      <div class="story-progress" aria-hidden="true"><span></span></div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO: scrubbed word reveal with inline image pills -->
+  <section class="manifesto">
+    <p class="scrub-text" id="manifesto">
+      Born from the natural character of Maracas
+      <span class="pill-img" style="background-image:url(img/mist.webp)"></span>
+      every bottle carries our commitment to the source
+      <span class="pill-img" style="background-image:url(img/rocks.webp)"></span>
+      to responsible production, and to quality you can trust.
+      <span class="pill-img" style="background-image:url(img/pour.webp)"></span>
+      Water is more than a necessity. It connects nature, our community and life itself.
+    </p>
+  </section>
+
+  <!-- GRAPH: spring vs purified -->
+  <section class="graph-sec" id="compare">
+    <div class="graph-pin">
+      <div class="graph-head">
+        <h2>Spring water keeps what the spring gives.</h2>
+        <p>Reverse osmosis, used for most purified water, typically removes 90% or more of dissolved minerals. Ours is never put through it.</p>
+      </div>
+      <div class="bezel graph-card">
+        <div class="bezel-core">
+          <div class="graph-legend">
+            <span class="lg lg-spring"><i></i>Maracas Springs</span>
+            <span class="lg lg-ro"><i></i>Typical RO purified water</span>
+          </div>
+          <svg class="graph" viewBox="0 0 1000 440" role="img" aria-labelledby="gTitle gDesc">
+            <title id="gTitle">Natural minerals retained from source to bottle</title>
+            <desc id="gDesc">Spring water keeps about all of its naturally occurring minerals. Reverse osmosis purified water keeps roughly 5 to 10 percent.</desc>
+            <g class="g-grid">
+              <line x1="80" y1="40" x2="960" y2="40"/><line x1="80" y1="140" x2="960" y2="140"/>
+              <line x1="80" y1="240" x2="960" y2="240"/><line x1="80" y1="340" x2="960" y2="340"/>
+            </g>
+            <g class="g-axis">
+              <text x="64" y="45">100%</text><text x="64" y="145">66%</text><text x="64" y="245">33%</text><text x="64" y="345">0%</text>
+              <text x="120" y="400" text-anchor="start">At the source</text>
+              <text x="520" y="400" text-anchor="middle">Treatment</text>
+              <text x="940" y="400" text-anchor="end">In the bottle</text>
+            </g>
+            <path class="g-area" d="M120 48 C 380 46, 640 50, 940 52 L940 340 L120 340 Z"/>
+            <path class="g-line g-spring" d="M120 48 C 380 46, 640 50, 940 52"/>
+            <path class="g-line g-ro" d="M120 48 C 380 50, 450 70, 540 230 S 760 320, 940 322"/>
+            <circle class="g-dot g-dot-spring" cx="940" cy="52" r="9"/>
+            <circle class="g-dot g-dot-ro" cx="940" cy="322" r="9"/>
+          </svg>
+          <div class="graph-readout">
+            <div><span class="ro-num" id="numSpring">0</span><small>% minerals kept, Maracas Springs</small></div>
+            <div><span class="ro-num muted" id="numRo">100</span><small>% kept after typical RO</small></div>
+          </div>
+          <p class="graph-note">Illustrative. RO figure reflects typical published removal rates, not a test of any one brand.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAB BENTO -->
+  <section class="lab" id="lab">
+    <h2 class="sec-title">Tested by an accredited lab. <span class="soft">Not just our word.</span></h2>
+    <div class="bento">
+      <div class="cell cell-ecoli">
+        <img src="img/falls.webp" alt="Waterfall pouring into a clear pool surrounded by forest" loading="lazy">
+        <div class="cell-body">
+          <p class="cell-k">E. coli</p>
+          <p class="big"><span class="lt">&lt;</span><span data-count="1">1</span></p>
+          <p class="cell-v">CFU per 100 mL. Below the detection limit.</p>
+        </div>
+      </div>
+      <div class="cell cell-ph">
+        <div class="cell-body">
+          <p class="cell-k">pH, measured by KaizenLAB</p>
+          <p class="big" data-count="6.44">6.44</p>
+          <div class="ph-scale" aria-hidden="true">
+            <span class="ph-mark" style="--p:46%"></span>
+          </div>
+          <div class="ph-ends"><span>0 acidic</span><span>7 neutral</span><span>14 alkaline</span></div>
+        </div>
+      </div>
+      <div class="cell cell-hpc">
+        <div class="cell-body">
+          <p class="cell-k">Plate count</p>
+          <p class="big" data-count="34">34</p>
+          <p class="cell-v">CFU per 100 mL</p>
+        </div>
+      </div>
+      <div class="cell cell-cert">
+        <div class="cell-body">
+          <i class="ph-light ph-seal-check"></i>
+          <p class="cell-v"><strong>KaizenLAB</strong>, an A2LA accredited laboratory (Cert. 7460.01). Report dated 9 Oct 2026.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOP -->
+  <section class="shop" id="shop">
+    <div class="shop-grid">
+      <div class="bezel shop-visual">
+        <div class="bezel-core">
+          <img id="shopBottle" alt="Maracas Springs 500ml natural spring water bottle with green cap" src="img/splash.webp">
+          <span class="stock"><i class="ph-fill ph-check-circle"></i> In stock</span>
+        </div>
+      </div>
+      <div class="shop-panel">
+        <h2>Maracas Springs<br>Natural Spring Water</h2>
+        <p class="shop-desc">500ml bottles. Pure, refreshing, natural. Pick a pack and we deliver to your door.</p>
+        <fieldset class="packs" id="packs">
+          <legend>Choose a pack</legend>
+          <label class="pack"><input type="radio" name="pack" value="1"><span><b>Single</b><em>1 bottle</em><strong>$10</strong></span></label>
+          <label class="pack"><input type="radio" name="pack" value="6"><span><b>Six pack</b><em>6 bottles</em><strong>$60</strong></span></label>
+          <label class="pack"><input type="radio" name="pack" value="12" checked><span><b>Twelve pack</b><em>12 bottles</em><strong>$120</strong></span></label>
+          <label class="pack"><input type="radio" name="pack" value="24"><span><b>Full case</b><em>24 bottles</em><strong>$240</strong></span></label>
+        </fieldset>
+        <div class="buy-row">
+          <div class="qty" aria-label="Quantity">
+            <button type="button" id="qtyMinus" aria-label="Fewer packs"><i class="ph-light ph-minus"></i></button>
+            <output id="qty">1</output>
+            <button type="button" id="qtyPlus" aria-label="More packs"><i class="ph-light ph-plus"></i></button>
+          </div>
+          <button class="btn btn-primary btn-wide" id="addBtn">Add to cart <span class="btn-total" id="lineTotal">TT$120</span></button>
+        </div>
+        <p class="bulk"><i class="ph-light ph-buildings"></i> Office, fete or event order? <a href="https://wa.me/18687248356?text=Hi%2C%20I%27d%20like%20bulk%20pricing%20for%20Maracas%20Springs%20water." target="_blank" rel="noopener">Ask for case pricing</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIFESTYLE: horizontal pan -->
+  <section class="pan" aria-label="Where people drink Maracas Springs">
+    <div class="pan-track" id="panTrack">
+      <div class="pan-intro">
+        <h2>Wherever the day takes you.</h2>
+        <p>Beach lime, trail morning or a long day at the desk.</p>
+      </div>
+      <figure class="pan-item tall"><img src="img/beach.webp" alt="Aerial view of a palm tree on a white sand beach beside turquoise water" loading="lazy"><figcaption>The beach lime</figcaption></figure>
+      <figure class="pan-item"><img src="img/trail.webp" alt="Hiker standing on a rainforest trail among tall trees and ferns" loading="lazy"><figcaption>Trail mornings</figcaption></figure>
+      <figure class="pan-item tall"><img src="img/pour.webp" alt="Water being poured from a bottle into a glass on a wooden table" loading="lazy"><figcaption>At the table</figcaption></figure>
+      <figure class="pan-item"><img src="img/range.webp" alt="Green forested mountains under a cloudy sky" loading="lazy"><figcaption>Where it starts</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ORDER STEPS -->
+  <section class="order" id="order">
+    <h2 class="sec-title">Ordering takes a minute.</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><div><h3>Pick your pack</h3><p>Singles, six packs, twelve packs or a full case of 24.</p></div></li>
+      <li><span class="n">2</span><div><h3>Pay your way</h3><p>Pay by card online, or cash on delivery.</p></div></li>
+      <li><span class="n">3</span><div><h3>We bring it</h3><p>Delivery across Trinidad, or free pickup on North Coast Road, Maracas Bay.</p></div></li>
+    </ol>
+    <p class="partner"><i class="ph-light ph-microphone-stage"></i> In partnership with Calypso Queen Abbi Blackman.</p>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final">
+    <div class="final-bg"><img src="img/mist.webp" alt="" loading="lazy"></div>
+    <div class="final-copy">
+      <h2>Naturally connected to life.</h2>
+      <div class="final-ctas">
+        <a href="#shop" class="btn btn-light">Shop water <span class="btn-island"><i class="ph-light ph-arrow-up-right"></i></span></a>
+        <a href="https://wa.me/18687248356" class="btn btn-ghost-light" target="_blank" rel="noopener"><i class="ph-light ph-whatsapp-logo"></i> Order on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-grid">
+    <div>
+      <a href="#top" class="brand"><span class="brand-mark"><i class="ph-fill ph-drop"></i></span><span>Maracas Springs</span></a>
+      <p>Natural spring water. Maracas, Trinidad and Tobago.</p>
+    </div>
+    <div>
+      <p class="foot-h">Shop</p>
+      <a href="#shop">Bottles and cases</a><a href="#lab">Lab results</a><a href="#order">Delivery</a>
+    </div>
+    <div>
+      <p class="foot-h">Contact</p>
+      <a href="https://wa.me/18687248356" target="_blank" rel="noopener">WhatsApp 868-724-8356</a>
+      <a href="mailto:sureshseecharan@gmail.com">sureshseecharan@gmail.com</a>
+      <span>North Coast Road, Maracas Bay</span>
+    </div>
+  </div>
+  <p class="foot-base">&copy; 2026 Maracas Springs. <a class="portside" href="https://wa.me/18682591409" target="_blank" rel="noopener">Demo site by Portside Digital</a></p>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Cart" aria-hidden="true">
+  <div class="drawer-grip" aria-hidden="true"></div>
+  <header class="drawer-head">
+    <h2 id="drawerTitle">Your cart</h2>
+    <button class="icon-btn" id="closeDrawer" aria-label="Close cart"><i class="ph-light ph-x"></i></button>
+  </header>
+
+  <div class="drawer-view" id="viewCart">
+    <ul class="lines" id="lines"></ul>
+    <div class="empty" id="empty">
+      <i class="ph-light ph-drop"></i>
+      <p>Your cart is empty.</p>
+      <button class="btn btn-ghost" data-close>Choose a pack</button>
+    </div>
+    <div class="drawer-foot" id="cartFoot">
+      <div class="sum"><span>Subtotal</span><strong id="subtotal">TT$0</strong></div>
+      <p class="fine">Delivery fee confirmed on WhatsApp. Pickup at Maracas Bay is free.</p>
+      <button class="btn btn-primary btn-block" id="toCheckout">Checkout <span class="btn-island"><i class="ph-light ph-arrow-right"></i></span></button>
+    </div>
+  </div>
+
+  <form class="drawer-view" id="viewCheckout" hidden novalidate>
+    <div class="field">
+      <label for="fName">Full name</label>
+      <input id="fName" name="name" autocomplete="name" required>
+      <p class="err" data-for="fName">Please add your name.</p>
+    </div>
+    <div class="field">
+      <label for="fPhone">WhatsApp number</label>
+      <input id="fPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="868-000-0000" required>
+      <p class="err" data-for="fPhone">Please add a number we can reach.</p>
+    </div>
+    <div class="seg" role="radiogroup" aria-label="Delivery or pickup">
+      <label><input type="radio" name="ship" value="Delivery" checked><span>Delivery</span></label>
+      <label><input type="radio" name="ship" value="Pickup at Maracas Bay"><span>Pickup</span></label>
+    </div>
+    <div class="field" id="addrField">
+      <label for="fAddr">Delivery address</label>
+      <input id="fAddr" name="addr" autocomplete="street-address" placeholder="Street, town" required>
+      <p class="err" data-for="fAddr">Where should we deliver?</p>
+    </div>
+    <div class="seg" role="radiogroup" aria-label="Payment">
+      <label><input type="radio" name="pay" value="Card online" checked><span><i class="ph-light ph-credit-card"></i> Card</span></label>
+      <label><input type="radio" name="pay" value="Cash on delivery"><span><i class="ph-light ph-money"></i> Cash</span></label>
+    </div>
+    <p class="fine" id="payNote">Secure card checkout goes live at launch. For this demo, your order is sent on WhatsApp.</p>
+    <div class="drawer-foot">
+      <div class="sum"><span>Total</span><strong id="checkoutTotal">TT$0</strong></div>
+      <button class="btn btn-primary btn-block" type="submit">Place order <span class="btn-island"><i class="ph-light ph-whatsapp-logo"></i></span></button>
+      <button class="btn btn-ghost btn-block" type="button" id="backToCart">Back to cart</button>
+    </div>
+  </form>
+
+  <div class="drawer-view done" id="viewDone" hidden>
+    <i class="ph-light ph-check-circle"></i>
+    <h3>Order sent</h3>
+    <p>WhatsApp opened with your order. We will confirm delivery time there.</p>
+    <button class="btn btn-ghost" data-close>Keep browsing</button>
+  </div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
