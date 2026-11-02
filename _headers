@@ -13,6 +13,8 @@
 # keep the preview address out of Google; only the real domain should rank
 https://:project.pages.dev/*
   X-Robots-Tag: noindex
+https://maracas-springs.maracas-springs.workers.dev/*
+  X-Robots-Tag: noindex
 
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
