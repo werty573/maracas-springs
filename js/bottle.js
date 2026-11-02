@@ -101,12 +101,13 @@ async function drawLabel() {
 function bottleProfile() {
   // [radius, y] from base to lip. Height about 4.1 units.
   const pts = [[0, 0.02], [0.3, 0], [0.5, 0.03], [0.6, 0.12], [0.63, 0.26]];
-  // horizontal grip ridges (the real bottle has a twisted grip)
-  for (let y = 0.3; y <= 1.55; y += 0.025) {
-    const k = Math.sin((y - 0.3) / 1.25 * Math.PI * 7);
-    pts.push([0.63 - 0.04 * Math.max(0, k) ** 2, y]);
+  // dense rings through the grip so the twisted grooves below can bend smoothly
+  // pinched waist under the label, then the bulge down to the base (as in the photo)
+  for (let y = 0.3; y <= 1.75; y += 0.02) {
+    const waist = Math.exp(-(((y - 1.28) / 0.26) ** 2));
+    pts.push([0.63 - 0.075 * waist, y]);
   }
-  pts.push([0.63, 1.6], [0.63, 2.9]);
+  pts.push([0.63, 2.9]);
   for (let i = 1; i <= 14; i++) {
     const t = i / 14;
     pts.push([0.63 - 0.4 * (1 - Math.cos(t * Math.PI / 2)) ** 0.8 * (t < 1 ? 1 : 1), 2.9 + t * 0.72]);
@@ -142,13 +143,34 @@ export async function createBottle(canvas) {
   bob.add(bottle);
 
   const prof = bottleProfile();
-  const shell = new THREE.Mesh(
-    new THREE.LatheGeometry(prof, 128),
-    new THREE.MeshPhysicalMaterial({
-      color: 0xffffff, metalness: 0, roughness: 0.02, transparent: true, opacity: 0.13,
-      clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 2.2, specularIntensity: 1, side: THREE.DoubleSide, depthWrite: false,
-    })
-  );
+  const shellGeo = new THREE.LatheGeometry(prof, 160);
+  // twisted grip grooves below the label, like the client's bottle
+  const sp = shellGeo.attributes.position;
+  for (let i = 0; i < sp.count; i++) {
+    const x = sp.getX(i), y = sp.getY(i), z = sp.getZ(i);
+    const a = Math.atan2(x, z);
+    let k = 1;
+    if (y < 0.28) k -= 0.07 * (0.5 - 0.5 * Math.cos(a * 5)) * Math.min(1, (0.28 - y) / 0.2); // wavy footed base
+    if (y >= 0.2 && y <= 1.75) {
+      const fade = Math.min(1, (y - 0.2) / 0.12, (1.75 - y) / 0.12);
+      k -= 0.06 * Math.max(0, Math.sin(a * 7 + y * 3.4)) ** 3 * fade;
+    }
+    sp.setX(i, x * k); sp.setZ(i, z * k);
+  }
+  shellGeo.computeVertexNormals();
+  const shellMat = new THREE.MeshPhysicalMaterial({
+    color: 0x8fa6b8, metalness: 0, roughness: 0.03, transparent: true, opacity: 0.16,
+    clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.1, specularIntensity: 1, side: THREE.DoubleSide, depthWrite: false,
+  });
+  // clear PET: see-through face-on, bright only where the plastic turns away (fresnel)
+  shellMat.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader.replace('#include <opaque_fragment>', `
+      float ms_fr = pow(1.0 - abs(dot(normalize(normal), normalize(vViewPosition))), 2.2);
+      // edges pick up a cool blue-grey like real PET on a light backdrop
+      vec3 ms_edge = mix(outgoingLight, vec3(0.32, 0.42, 0.52), ms_fr * 0.75);
+      gl_FragColor = vec4(ms_edge, clamp(diffuseColor.a * (0.2 + 5.0 * ms_fr), 0.0, 0.8));`);
+  };
+  const shell = new THREE.Mesh(shellGeo, shellMat);
   shell.renderOrder = 3;
 
   // water fills to the shoulder
@@ -156,18 +178,20 @@ export async function createBottle(canvas) {
   waterPts.push(new THREE.Vector2(0.001, 3.2));
   const water = new THREE.Mesh(
     new THREE.LatheGeometry(waterPts, 96),
-    new THREE.MeshPhysicalMaterial({ color: 0x9fcfea, roughness: 0.02, transparent: true, opacity: 0.12, envMapIntensity: 0.8, depthWrite: false })
+    new THREE.MeshPhysicalMaterial({ color: 0x6fa7cf, roughness: 0.02, transparent: true, opacity: 0.16, envMapIntensity: 0.6, depthWrite: false })
   );
   water.renderOrder = 1;
 
-  const labelTex = new THREE.CanvasTexture(await drawLabel());
+  // the client's own printed label, unwrapped from his photo; drawn version as a fallback
+  let labelTex = await new Promise((res) => new THREE.TextureLoader().load('/img/label.jpg', res, undefined, () => res(null)));
+  if (!labelTex) labelTex = new THREE.CanvasTexture(await drawLabel());
   labelTex.colorSpace = THREE.SRGBColorSpace;
   labelTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
   const label = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.637, 0.637, 1.22, 128, 1, true, Math.PI, Math.PI * 2),
-    new THREE.MeshPhysicalMaterial({ map: labelTex, roughness: 0.38, clearcoat: 0.6, clearcoatRoughness: 0.2, side: THREE.DoubleSide })
+    new THREE.CylinderGeometry(0.637, 0.637, 1.105, 160, 1, true, Math.PI, Math.PI * 2),
+    new THREE.MeshPhysicalMaterial({ map: labelTex, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.15, side: THREE.FrontSide })
   );
-  label.position.y = 2.24;
+  label.position.y = 2.33;
   label.renderOrder = 2;
 
   // ridged green cap
