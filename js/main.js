@@ -214,14 +214,27 @@ createBottle(canvas).then((api) => {
 /* ---------------- shop + cart ---------------- */
 let productImg = 'img/splash.webp';
 let cart = [];
-try { cart = JSON.parse(localStorage.getItem('ms-cart') || '[]'); } catch (e) { cart = []; }
+const MAX_QTY = 50;
+// Only trust saved carts that match real packs and sane quantities.
+function cleanCart(raw) {
+  if (!Array.isArray(raw)) return [];
+  const out = [];
+  raw.slice(0, 10).forEach((l) => {
+    const p = Number(l && l.pack), q = Math.floor(Number(l && l.qty));
+    if (!PACKS[p] || !Number.isFinite(q) || q < 1) return;
+    const hit = out.find((x) => x.pack === p);
+    if (hit) hit.qty = Math.min(MAX_QTY, hit.qty + q); else out.push({ pack: p, qty: Math.min(MAX_QTY, q) });
+  });
+  return out;
+}
+try { cart = cleanCart(JSON.parse(localStorage.getItem('ms-cart') || '[]')); } catch (e) { cart = []; }
 const save = () => { try { localStorage.setItem('ms-cart', JSON.stringify(cart)); } catch (e) {} };
 let qty = 1;
 const qtyOut = $('#qty'), lineTotal = $('#lineTotal');
-const pack = () => +$('input[name="pack"]:checked').value;
+const pack = () => { const v = +$('input[name="pack"]:checked').value; return PACKS[v] ? v : 12; };
 function updateBuy() { qtyOut.textContent = qty; lineTotal.textContent = money(pack() * PRICE * qty); }
 $('#qtyMinus').addEventListener('click', () => { qty = Math.max(1, qty - 1); updateBuy(); });
-$('#qtyPlus').addEventListener('click', () => { qty = Math.min(50, qty + 1); updateBuy(); });
+$('#qtyPlus').addEventListener('click', () => { qty = Math.min(MAX_QTY, qty + 1); updateBuy(); });
 $$('input[name="pack"]').forEach((r) => r.addEventListener('change', updateBuy));
 updateBuy();
 
@@ -232,8 +245,9 @@ function say(msg) { toast.textContent = msg; toast.classList.add('show'); clearT
 $('#addBtn').addEventListener('click', () => {
   const k = pack();
   const hit = cart.find((l) => l.pack === k);
-  hit ? (hit.qty += qty) : cart.push({ pack: k, qty });
+  if (hit) hit.qty = Math.min(MAX_QTY, hit.qty + qty); else cart.push({ pack: k, qty });
   save(); renderCart();
+  nav.classList.remove('hide');
   const cb = $('#cartBtn'); cb.classList.remove('bump'); void cb.offsetWidth; cb.classList.add('bump');
   say(`${qty} × ${PACKS[k]} added`);
   qty = 1; updateBuy();
@@ -258,7 +272,7 @@ function renderCart() {
 }
 linesEl.addEventListener('click', (e) => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.inc) cart[+b.dataset.inc].qty++;
+  if (b.dataset.inc) { const l = cart[+b.dataset.inc]; l.qty = Math.min(MAX_QTY, l.qty + 1); }
   if (b.dataset.dec) { const l = cart[+b.dataset.dec]; l.qty--; if (l.qty < 1) cart.splice(+b.dataset.dec, 1); }
   if (b.dataset.rm) cart.splice(+b.dataset.rm, 1);
   save(); renderCart();
@@ -301,7 +315,7 @@ form.addEventListener('change', (e) => {
   if (e.target.name === 'ship') addrField.hidden = e.target.value !== 'Delivery';
   if (e.target.name === 'pay') $('#payNote').textContent = e.target.value === 'Cash on delivery'
     ? 'Pay the driver in cash when your water arrives.'
-    : 'Secure card checkout goes live at launch. For this demo, your order is sent on WhatsApp.';
+    : 'We send our bank details on WhatsApp. Your water goes out once the transfer clears.';
 });
 form.addEventListener('input', (e) => e.target.closest('.field')?.classList.remove('bad'));
 form.addEventListener('submit', (e) => {
@@ -312,19 +326,22 @@ form.addEventListener('submit', (e) => {
   let ok = true;
   need.forEach((id) => {
     const el = $('#' + id);
-    const bad = id === 'fPhone' ? el.value.replace(/\D/g, '').length < 7 : !el.value.trim();
+    const digits = el.value.replace(/\D/g, '').length;
+    const bad = id === 'fPhone' ? digits < 7 || digits > 15 : !el.value.trim();
     el.closest('.field').classList.toggle('bad', bad);
     if (bad && ok) { el.focus(); ok = false; }
   });
-  if (!ok) return;
+  if (!ok || !cart.length) return;
+  // plain text only, trimmed to the field limits, no control characters
+  const clean = (v, n) => String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
   const msg = [
     'New Maracas Springs order',
     ...cart.map((l) => `- ${l.qty} x ${PACKS[l.pack]} (${l.pack * l.qty} bottles) = ${money(l.pack * PRICE * l.qty)}`),
     `Total: ${money(total())} for ${bottles()} bottles`,
-    `Name: ${data.get('name')}`,
-    `Phone: ${data.get('phone')}`,
-    `${data.get('ship')}${data.get('ship') === 'Delivery' ? ': ' + data.get('addr') : ''}`,
-    `Payment: ${data.get('pay')}`,
+    `Name: ${clean(data.get('name'), 80)}`,
+    `Phone: ${clean(data.get('phone'), 20)}`,
+    data.get('ship') === 'Delivery' ? `Delivery: ${clean(data.get('addr'), 160)}` : 'Pickup at Maracas Bay',
+    `Payment: ${data.get('pay') === 'Bank transfer' ? 'Bank transfer' : 'Cash on delivery'}`,
   ].join('\n');
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
   cart = []; save(); renderCart(); form.reset(); addrField.hidden = false;

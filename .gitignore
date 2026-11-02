@@ -1,1 +1,3 @@
-*.mjs.log
+dist/
+.wrangler/
+node_modules/

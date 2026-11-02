@@ -1,7 +1,7 @@
 // Maracas Springs 500ml bottle, built procedurally in three.js.
 // The label is redrawn on a canvas from the client's own bottle photo.
-import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import * as THREE from '../vendor/three.module.min.js';
+import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 
 const NAVY = '#1b2a6b';
 const LEAF = '#2f7d34';
@@ -24,7 +24,7 @@ async function drawLabel() {
   const serif = '"Cormorant Garamond", Georgia, serif';
 
   // rainforest wrap, like the waterfall cliffs on the real label
-  const forest = await loadImg('img/jungle.webp');
+  const forest = await loadImg('/img/jungle.webp');
   if (forest) {
     const s = H / forest.height * 1.15;
     for (let x = 0; x < W; x += forest.width * s) g.drawImage(forest, x, -40, forest.width * s, forest.height * s);
