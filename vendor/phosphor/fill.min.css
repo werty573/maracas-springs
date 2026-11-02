@@ -1,0 +1,95 @@
+@font-face {
+  font-family: "Phosphor-Fill";
+  src:url("./Phosphor-Fill-sub.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.ph-fill {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: "Phosphor-Fill" !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Enable Ligatures ================ */
+  letter-spacing: 0;
+  -webkit-font-feature-settings: "liga";
+  -moz-font-feature-settings: "liga=1";
+  -moz-font-feature-settings: "liga";
+  -ms-font-feature-settings: "liga" 1;
+  font-feature-settings: "liga";
+  -webkit-font-variant-ligatures: discretionary-ligatures;
+  font-variant-ligatures: discretionary-ligatures;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.ph-fill.ph-arrow-left:before {
+  content: "\e058";
+}
+.ph-fill.ph-arrow-right:before {
+  content: "\e06c";
+}
+.ph-fill.ph-arrow-up-right:before {
+  content: "\e092";
+}
+.ph-fill.ph-atom:before {
+  content: "\e5e4";
+}
+.ph-fill.ph-bank:before {
+  content: "\e0b4";
+}
+.ph-fill.ph-buildings:before {
+  content: "\e102";
+}
+.ph-fill.ph-check-circle:before {
+  content: "\e184";
+}
+.ph-fill.ph-credit-card:before {
+  content: "\e1d2";
+}
+.ph-fill.ph-drop:before {
+  content: "\e210";
+}
+.ph-fill.ph-microphone-stage:before {
+  content: "\e75c";
+}
+.ph-fill.ph-minus:before {
+  content: "\e32a";
+}
+.ph-fill.ph-money:before {
+  content: "\e588";
+}
+.ph-fill.ph-moon:before {
+  content: "\e330";
+}
+.ph-fill.ph-mountains:before {
+  content: "\e7ae";
+}
+.ph-fill.ph-plus:before {
+  content: "\e3d4";
+}
+.ph-fill.ph-recycle:before {
+  content: "\e75a";
+}
+.ph-fill.ph-seal-check:before {
+  content: "\e606";
+}
+.ph-fill.ph-sun:before {
+  content: "\e472";
+}
+.ph-fill.ph-tote-simple:before {
+  content: "\e678";
+}
+.ph-fill.ph-whatsapp-logo:before {
+  content: "\e5d0";
+}
+.ph-fill.ph-x:before {
+  content: "\e4f6";
+}

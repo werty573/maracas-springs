@@ -1,4 +1,3 @@
-import { createBottle } from './bottle.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -185,7 +184,7 @@ function direct() {
   const a = worldFromRect(heroMedia.getBoundingClientRect());
   const phone = isPhone();
   const vh = 2 * 13 * Math.tan((15 * Math.PI) / 180);
-  const center = phone ? { x: 0, y: vh * 0.14, s: 0.98 } : { x: 0, y: -0.05, s: 1.2 };
+  const center = phone ? { x: 0, y: vh * 0.11, s: 0.84 } : { x: 0, y: -0.05, s: 1.2 };
   const b = ease(st.blend);
   const sway = phone ? 0 : Math.cos(Math.min(Math.max(p * 3 - 0.5, 0), 2) * Math.PI) * 0.9 * Math.min(1, p * 6);
   const s = bottle.state;
@@ -200,7 +199,13 @@ function direct() {
 }
 direct();
 
-createBottle(canvas).then((api) => {
+// The 3D bottle (three.js, ~170 KB) loads only after the page is up and the
+// browser is idle, so the photo, text and buttons come first on slow phones.
+const whenIdle = () => new Promise((res) => {
+  const go = () => ('requestIdleCallback' in window ? requestIdleCallback(res, { timeout: 2000 }) : setTimeout(res, 300));
+  document.readyState === 'complete' ? go() : addEventListener('load', go, { once: true });
+});
+whenIdle().then(() => import('./bottle.js')).then(({ createBottle }) => createBottle(canvas)).then((api) => {
   bottle = api;
   canvas.classList.add('on');
   const url = api.snapshot(600, 900);

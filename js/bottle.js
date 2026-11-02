@@ -24,7 +24,7 @@ async function drawLabel() {
   const serif = '"Cormorant Garamond", Georgia, serif';
 
   // rainforest wrap, like the waterfall cliffs on the real label
-  const forest = await loadImg('/img/jungle.webp');
+  const forest = await loadImg('/img/jungle-1000.webp');
   if (forest) {
     const s = H / forest.height * 1.15;
     for (let x = 0; x < W; x += forest.width * s) g.drawImage(forest, x, -40, forest.width * s, forest.height * s);
@@ -117,9 +117,19 @@ function bottleProfile() {
 }
 
 export async function createBottle(canvas) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   const mobile = matchMedia('(max-width: 767px)').matches;
-  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.6 : 2));
+  const touch = matchMedia('(hover: none)').matches;
+  // phones and low-core devices get fewer pixels, polygons and cheaper materials
+  const lowEnd = mobile || touch || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !lowEnd, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, lowEnd ? 1.35 : 2));
+  const SEG = lowEnd ? 72 : 160;
+  // clearcoat costs two extra lighting passes; phones use the standard material
+  const Mat = (o) => {
+    if (!lowEnd) return new THREE.MeshPhysicalMaterial(o);
+    const { clearcoat, clearcoatRoughness, specularIntensity, ...rest } = o;
+    return new THREE.MeshStandardMaterial(rest);
+  };
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -143,7 +153,7 @@ export async function createBottle(canvas) {
   bob.add(bottle);
 
   const prof = bottleProfile();
-  const shellGeo = new THREE.LatheGeometry(prof, 160);
+  const shellGeo = new THREE.LatheGeometry(prof, SEG);
   // twisted grip grooves below the label, like the client's bottle
   const sp = shellGeo.attributes.position;
   for (let i = 0; i < sp.count; i++) {
@@ -158,7 +168,7 @@ export async function createBottle(canvas) {
     sp.setX(i, x * k); sp.setZ(i, z * k);
   }
   shellGeo.computeVertexNormals();
-  const shellMat = new THREE.MeshPhysicalMaterial({
+  const shellMat = Mat({
     color: 0x8fa6b8, metalness: 0, roughness: 0.03, transparent: true, opacity: 0.16,
     clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.1, specularIntensity: 1, side: THREE.DoubleSide, depthWrite: false,
   });
@@ -177,25 +187,25 @@ export async function createBottle(canvas) {
   const waterPts = prof.filter((v) => v.y < 3.2).map((v) => new THREE.Vector2(Math.max(v.x - 0.03, 0.001), v.y + 0.02));
   waterPts.push(new THREE.Vector2(0.001, 3.2));
   const water = new THREE.Mesh(
-    new THREE.LatheGeometry(waterPts, 96),
-    new THREE.MeshPhysicalMaterial({ color: 0x6fa7cf, roughness: 0.02, transparent: true, opacity: 0.16, envMapIntensity: 0.6, depthWrite: false })
+    new THREE.LatheGeometry(waterPts, lowEnd ? 48 : 96),
+    Mat({ color: 0x6fa7cf, roughness: 0.02, transparent: true, opacity: 0.16, envMapIntensity: 0.6, depthWrite: false })
   );
   water.renderOrder = 1;
 
   // the client's own printed label, unwrapped from his photo; drawn version as a fallback
-  let labelTex = await new Promise((res) => new THREE.TextureLoader().load('/img/label.jpg', res, undefined, () => res(null)));
+  let labelTex = await new Promise((res) => new THREE.TextureLoader().load('/img/label.webp', res, undefined, () => res(null)));
   if (!labelTex) labelTex = new THREE.CanvasTexture(await drawLabel());
   labelTex.colorSpace = THREE.SRGBColorSpace;
-  labelTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  labelTex.anisotropy = Math.min(lowEnd ? 4 : 16, renderer.capabilities.getMaxAnisotropy());
   const label = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.637, 0.637, 1.105, 160, 1, true, Math.PI, Math.PI * 2),
-    new THREE.MeshPhysicalMaterial({ map: labelTex, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.15, side: THREE.FrontSide })
+    new THREE.CylinderGeometry(0.637, 0.637, 1.105, SEG, 1, true, Math.PI, Math.PI * 2),
+    Mat({ map: labelTex, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.15, side: THREE.FrontSide })
   );
   label.position.y = 2.33;
   label.renderOrder = 2;
 
   // ridged green cap
-  const capGeo = new THREE.CylinderGeometry(0.29, 0.29, 0.42, 96, 1);
+  const capGeo = new THREE.CylinderGeometry(0.29, 0.29, 0.42, lowEnd ? 96 : 192, 1);
   const pos = capGeo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i), r = Math.hypot(x, z);
@@ -205,7 +215,7 @@ export async function createBottle(canvas) {
     }
   }
   capGeo.computeVertexNormals();
-  const cap = new THREE.Mesh(capGeo, new THREE.MeshPhysicalMaterial({ color: 0x17663a, roughness: 0.42, clearcoat: 0.5 }));
+  const cap = new THREE.Mesh(capGeo, Mat({ color: 0x17663a, roughness: 0.42, clearcoat: 0.5 }));
   cap.position.y = 4.0;
   const ring = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.025, 12, 64), cap.material);
   ring.rotation.x = Math.PI / 2; ring.position.y = 3.78;
@@ -239,19 +249,26 @@ export async function createBottle(canvas) {
 
   let active = true;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // the idle float is a desktop nicety; on touch screens the bottle only
+  // redraws when scrolling actually moves it, which saves battery and frames
+  const idle = !reduce && !touch;
   const clock = new THREE.Clock();
+  let lastKey = '';
   function frame() {
     requestAnimationFrame(frame);
     if (!active) return;
-    const t = clock.getElapsedTime();
+    const t = idle ? clock.getElapsedTime() : 0;
+    const key = idle ? '' : [state.x, state.y, state.s, state.ry, state.rz, state.shadow].map((v) => v.toFixed(4)).join() + canvas.width + 'x' + canvas.height;
+    if (!idle && key === lastKey) return;
+    lastKey = key;
     pointer.x += (pointer.tx - pointer.x) * 0.06;
     pointer.y += (pointer.ty - pointer.y) * 0.06;
     root.position.set(state.x, state.y, 0);
     root.scale.setScalar(state.s);
-    bottle.rotation.y = state.ry + (reduce ? 0 : Math.sin(t * 0.5) * 0.12);
+    bottle.rotation.y = state.ry + (idle ? Math.sin(t * 0.5) * 0.12 : 0);
     bob.rotation.z = state.rz + pointer.x * -0.12;
     bob.rotation.x = pointer.y * 0.12;
-    bob.position.y = reduce ? 0 : Math.sin(t * 1.1) * 0.06;
+    bob.position.y = idle ? Math.sin(t * 1.1) * 0.06 : 0;
     shadow.material.opacity = state.shadow;
     renderer.render(scene, camera);
   }
@@ -269,6 +286,7 @@ export async function createBottle(canvas) {
     const url = canvas.toDataURL('image/png');
     renderer.setSize(size.x, size.y, false); camera.aspect = pa; camera.updateProjectionMatrix();
     Object.assign(state, prev);
+    lastKey = '';
     return url;
   }
 
