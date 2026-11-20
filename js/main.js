@@ -6,12 +6,15 @@ const isPhone = () => matchMedia('(max-width: 767px)').matches;
 const WA = '18687248356';
 // Prices from Suresh, 20 Nov 2026. n = bottles in one pack.
 const PACKS = {
+  m1: { name: '250ml bottle', size: '250ml', n: 1, price: 3 },
+  m2: { name: '250ml pair', size: '250ml', n: 2, price: 5 },
   s1: { name: 'Single bottle', size: '500ml', n: 1, price: 7 },
   s6: { name: 'Six pack', size: '500ml', n: 6, price: 42 },
   s12: { name: 'Twelve pack', size: '500ml', n: 12, price: 84 },
   l15: { name: '1.5 litre bottle', size: '1.5L', n: 1, price: 10 },
   g5: { name: '5 gallon returnable', size: '5 gallon', n: 1, price: 40 },
   ws3: { name: 'Wholesale, 3 cases', size: '500ml', n: 72, price: 100, img: 'img/case.webp' },
+  mw5: { name: 'Wholesale 250ml, 5 cases', size: '250ml case', n: 5, price: 100 },
 };
 const money = (n) => 'TT$' + n.toLocaleString('en-TT');
 

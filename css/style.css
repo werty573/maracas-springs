@@ -493,7 +493,8 @@ p { margin: 0; }
 .case-visual img { width: 100%; max-width: 560px; height: auto; }
 .case-copy h2 { font-size: clamp(2.1rem, 4vw, 3.4rem); margin-bottom: 1rem; }
 .case-copy > p:not(.eyebrow) { color: var(--ink-2); max-width: 46ch; }
-.case-facts { margin: 1.8rem 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.case-facts { margin: 1.8rem 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.pack-wide { grid-column: 1 / -1; }
 .case-facts div { padding: .9rem 1rem; border-radius: 1.1rem; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
 .case-facts dt { font-size: .82rem; color: var(--ink-2); }
 .case-facts dd { margin: .2rem 0 0; font-family: var(--display); font-weight: 800; font-size: 1.15rem; }
@@ -501,8 +502,6 @@ p { margin: 0; }
 
 @media (max-width: 767px) {
   .case-grid { grid-template-columns: 1fr; }
-  .case-facts { grid-template-columns: 1fr 1fr; }
-  .case-facts div:last-child { grid-column: 1 / -1; }
 }
 
 /* ---------- investment ---------- */
