@@ -4,8 +4,15 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isPhone = () => matchMedia('(max-width: 767px)').matches;
 const WA = '18687248356';
-const PRICE = 10;
-const PACKS = { 1: 'Single bottle', 6: 'Six pack', 12: 'Twelve pack', 24: 'Full case (24)' };
+// Prices from Suresh, 20 Nov 2026. n = bottles in one pack.
+const PACKS = {
+  s1: { name: 'Single bottle', size: '500ml', n: 1, price: 7 },
+  s6: { name: 'Six pack', size: '500ml', n: 6, price: 42 },
+  s12: { name: 'Twelve pack', size: '500ml', n: 12, price: 84 },
+  l15: { name: '1.5 litre bottle', size: '1.5L', n: 1, price: 10 },
+  g5: { name: '5 gallon returnable', size: '5 gallon', n: 1, price: 40 },
+  ws3: { name: 'Wholesale, 3 cases', size: '500ml', n: 72, price: 100, img: 'img/case.webp' },
+};
 const money = (n) => 'TT$' + n.toLocaleString('en-TT');
 
 /* ---------------- theme ---------------- */
@@ -225,8 +232,8 @@ function cleanCart(raw) {
   if (!Array.isArray(raw)) return [];
   const out = [];
   raw.slice(0, 10).forEach((l) => {
-    const p = Number(l && l.pack), q = Math.floor(Number(l && l.qty));
-    if (!PACKS[p] || !Number.isFinite(q) || q < 1) return;
+    const p = String(l && l.pack), q = Math.floor(Number(l && l.qty));
+    if (!Object.hasOwn(PACKS, p) || !Number.isFinite(q) || q < 1) return;
     const hit = out.find((x) => x.pack === p);
     if (hit) hit.qty = Math.min(MAX_QTY, hit.qty + q); else out.push({ pack: p, qty: Math.min(MAX_QTY, q) });
   });
@@ -236,11 +243,13 @@ try { cart = cleanCart(JSON.parse(localStorage.getItem('ms-cart') || '[]')); } c
 const save = () => { try { localStorage.setItem('ms-cart', JSON.stringify(cart)); } catch (e) {} };
 let qty = 1;
 const qtyOut = $('#qty'), lineTotal = $('#lineTotal');
-const pack = () => { const v = +$('input[name="pack"]:checked').value; return PACKS[v] ? v : 12; };
-function updateBuy() { qtyOut.textContent = qty; lineTotal.textContent = money(pack() * PRICE * qty); }
+const pack = () => { const v = $('input[name="pack"]:checked').value; return Object.hasOwn(PACKS, v) ? v : 's12'; };
+function updateBuy() { qtyOut.textContent = qty; lineTotal.textContent = money(PACKS[pack()].price * qty); }
 $('#qtyMinus').addEventListener('click', () => { qty = Math.max(1, qty - 1); updateBuy(); });
 $('#qtyPlus').addEventListener('click', () => { qty = Math.min(MAX_QTY, qty + 1); updateBuy(); });
 $$('input[name="pack"]').forEach((r) => r.addEventListener('change', updateBuy));
+// "Order wholesale" picks the wholesale pack before scrolling to the shop
+$('#caseBuy').addEventListener('click', () => { $('input[value="ws3"]').checked = true; qty = 1; updateBuy(); });
 updateBuy();
 
 const toast = $('#toast');
@@ -254,23 +263,24 @@ $('#addBtn').addEventListener('click', () => {
   save(); renderCart();
   nav.classList.remove('hide');
   const cb = $('#cartBtn'); cb.classList.remove('bump'); void cb.offsetWidth; cb.classList.add('bump');
-  say(`${qty} × ${PACKS[k]} added`);
+  say(`${qty} × ${PACKS[k].name} added`);
   qty = 1; updateBuy();
 });
 
 const linesEl = $('#lines'), emptyEl = $('#empty'), footEl = $('#cartFoot');
-const total = () => cart.reduce((t, l) => t + l.pack * PRICE * l.qty, 0);
-const bottles = () => cart.reduce((t, l) => t + l.pack * l.qty, 0);
+const total = () => cart.reduce((t, l) => t + PACKS[l.pack].price * l.qty, 0);
+const items = () => cart.reduce((t, l) => t + l.qty, 0);
+const units = (l) => `${PACKS[l.pack].n * l.qty} x ${PACKS[l.pack].size}`;
 function renderCart() {
-  $('#cartCount').textContent = bottles();
+  $('#cartCount').textContent = items();
   const has = cart.length > 0;
   emptyEl.hidden = has; footEl.hidden = !has; linesEl.hidden = !has;
   linesEl.innerHTML = cart.map((l, i) => `
     <li class="line">
-      <div class="line-img"><img src="${productImg}" alt=""></div>
-      <div><b>${PACKS[l.pack]}</b><small>${l.pack * l.qty} bottles, 500ml</small>
+      <div class="line-img"><img src="${PACKS[l.pack].img || productImg}" alt=""></div>
+      <div><b>${PACKS[l.pack].name}</b><small>${units(l)}</small>
         <div class="line-ctrl"><button data-dec="${i}" aria-label="Fewer"><i class="ph-light ph-minus"></i></button><span>${l.qty}</span><button data-inc="${i}" aria-label="More"><i class="ph-light ph-plus"></i></button></div></div>
-      <div class="line-price">${money(l.pack * PRICE * l.qty)}<button class="line-remove" data-rm="${i}">Remove</button></div>
+      <div class="line-price">${money(PACKS[l.pack].price * l.qty)}<button class="line-remove" data-rm="${i}">Remove</button></div>
     </li>`).join('');
   $('#subtotal').textContent = money(total());
   $('#checkoutTotal').textContent = money(total());
@@ -341,8 +351,8 @@ form.addEventListener('submit', (e) => {
   const clean = (v, n) => String(v || '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
   const msg = [
     'New Maracas Springs order',
-    ...cart.map((l) => `- ${l.qty} x ${PACKS[l.pack]} (${l.pack * l.qty} bottles) = ${money(l.pack * PRICE * l.qty)}`),
-    `Total: ${money(total())} for ${bottles()} bottles`,
+    ...cart.map((l) => `- ${l.qty} x ${PACKS[l.pack].name} (${units(l)}) = ${money(PACKS[l.pack].price * l.qty)}`),
+    `Total: ${money(total())}`,
     `Name: ${clean(data.get('name'), 80)}`,
     `Phone: ${clean(data.get('phone'), 20)}`,
     data.get('ship') === 'Delivery' ? `Delivery: ${clean(data.get('addr'), 160)}` : 'Pickup at Maracas Bay',

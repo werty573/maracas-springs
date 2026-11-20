@@ -164,7 +164,7 @@ p { margin: 0; }
 .story-progress span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); }
 
 /* sections that slide over the fixed bottle canvas */
-.manifesto, .graph-sec, .lab, .shop, .pan, .order, .final, .foot { position: relative; z-index: 3; background: var(--bg); }
+.manifesto, .graph-sec, .lab, .shop, .case, .pan, .order, .invest, .final, .foot { position: relative; z-index: 3; background: var(--bg); }
 
 /* ---------- manifesto ---------- */
 .manifesto { padding: clamp(6rem, 14vw, 12rem) var(--gut); border-radius: 2.5rem 2.5rem 0 0; box-shadow: 0 -30px 60px -40px rgba(18,27,63,.25); }
@@ -484,3 +484,52 @@ p { margin: 0; }
 .nf { min-height: 100dvh; display: grid; place-content: center; justify-items: start; gap: 1.2rem; max-width: 640px; margin: 0 auto; padding: 6rem var(--gut); }
 .nf h1 { font-size: clamp(2.6rem, 8vw, 4.6rem); }
 .nf p { color: var(--ink-2); }
+
+/* ---------- wholesale case ---------- */
+.eyebrow { margin: 0 0 .8rem; font-size: .85rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.case { padding: clamp(3rem, 7vw, 6rem) var(--gut); }
+.case-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.case-visual .bezel-core { display: grid; place-items: center; padding: clamp(1rem, 3vw, 2.4rem); background: #fff; }
+.case-visual img { width: 100%; max-width: 560px; height: auto; }
+.case-copy h2 { font-size: clamp(2.1rem, 4vw, 3.4rem); margin-bottom: 1rem; }
+.case-copy > p:not(.eyebrow) { color: var(--ink-2); max-width: 46ch; }
+.case-facts { margin: 1.8rem 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.case-facts div { padding: .9rem 1rem; border-radius: 1.1rem; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.case-facts dt { font-size: .82rem; color: var(--ink-2); }
+.case-facts dd { margin: .2rem 0 0; font-family: var(--display); font-weight: 800; font-size: 1.15rem; }
+.case-ctas { margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: .7rem; }
+
+@media (max-width: 767px) {
+  .case-grid { grid-template-columns: 1fr; }
+  .case-facts { grid-template-columns: 1fr 1fr; }
+  .case-facts div:last-child { grid-column: 1 / -1; }
+}
+
+/* ---------- investment ---------- */
+.invest { padding: clamp(5rem, 10vw, 8rem) var(--gut); }
+.invest-head, .invest-grid, .invest-foot { max-width: var(--max); margin-left: auto; margin-right: auto; }
+.invest-head h2 { font-size: clamp(2.1rem, 4.4vw, 3.8rem); max-width: 18ch; }
+.invest-lede { margin: 1.2rem 0 0; color: var(--ink-2); max-width: 52ch; font-size: 1.08rem; }
+.invest-grid { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(6, 1fr); gap: .9rem; }
+.inv-cell { padding: clamp(1.3rem, 2.5vw, 2rem); border-radius: 1.6rem; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: .8rem; }
+.inv-sought { grid-column: span 3; background: var(--ink); color: var(--bg); justify-content: space-between; }
+.inv-sought .cell-k { color: color-mix(in srgb, var(--bg) 70%, transparent); }
+.inv-big { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.02; letter-spacing: -.02em; }
+.inv-shares { grid-column: span 3; }
+.share-bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--line); }
+.sb-own { width: 55%; background: var(--accent); }
+.sb-inv { width: 45%; background: color-mix(in srgb, var(--accent) 35%, transparent); }
+.share-key { list-style: none; margin: 0; padding: 0; display: grid; gap: .4rem; color: var(--ink-2); }
+.share-key b { display: inline-block; min-width: 3.2ch; font-family: var(--display); font-size: 1.4rem; color: var(--ink); margin-right: .4rem; }
+.inv-use, .inv-partner { grid-column: span 3; }
+.inv-list { margin: 0; padding-left: 1.1rem; display: grid; gap: .35rem; }
+.inv-vision { grid-column: 1 / -1; background: var(--accent-soft); }
+.inv-quote { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 2.1rem); line-height: 1.15; max-width: 30ch; }
+.inv-vision .cell-v { margin: 0; }
+.invest-foot { margin-top: 1.8rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; flex-wrap: wrap; }
+.invest-foot .case-ctas { margin-top: 0; }
+.inv-contact { margin: 0; }
+.inv-legal { margin: .5rem 0 0; font-size: .88rem; color: var(--ink-2); max-width: 60ch; }
+@media (max-width: 767px) {
+  .inv-sought, .inv-shares, .inv-use, .inv-partner { grid-column: 1 / -1; }
+}
